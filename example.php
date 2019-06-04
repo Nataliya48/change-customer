@@ -29,8 +29,8 @@ if ($response->isSuccessful()) {
     for ($page = 1; $page <= $totalPageCount; $page++) {
         $responseCustomersList = $client->request->customersList([], $page, 100);
         foreach ($responseCustomersList->customers as $customer) {
-            if (!empty($customer['presumableSex'])) {
-                $customerList[$customer['id']] = $customer['presumableSex'];
+            if (!empty($customer['presumableSex'])) { //'site'
+                $customerList[$customer['id']] = ['sex' => $customer['presumableSex'], 'site' => $customer['site']];
             }
         }
     }
@@ -42,7 +42,7 @@ if ($response->isSuccessful()) {
 
     for ($page = 1; $page <= $totalPageCount; $page++) {
         foreach ($customerList as $key => $customer) {
-            $responseСustomerEdit = $client->request->customersEdit(['id' => $key, 'sex' => $customer], 'id');
+            $responseСustomerEdit = $client->request->customersEdit(['id' => $key, 'sex' => $customer['sex']], 'id', $customer['site']);
             file_put_contents(__DIR__ . '/response.log', json_encode([
                 'date' => date('Y-m-d H:i:s'),
                 'customerId' => $key,
