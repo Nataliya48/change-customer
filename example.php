@@ -30,7 +30,7 @@ if ($response->isSuccessful()) {
         $responseCustomersList = $client->request->customersList([], $page, 100);
         foreach ($responseCustomersList->customers as $customer) {
             if (!empty($customer['presumableSex'])) { //'site'
-                $customerList[$customer['id']] = ['sex' => $customer['presumableSex'], 'site' => $customer['site']];
+                $customerList[] = ['id' => $customer['id'], 'sex' => $customer['presumableSex'], 'site' => $customer['site']];
             }
         }
     }
@@ -41,11 +41,11 @@ if ($response->isSuccessful()) {
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), FILE_APPEND);
 
     for ($page = 1; $page <= $totalPageCount; $page++) {
-        foreach ($customerList as $key => $customer) {
-            $responseСustomerEdit = $client->request->customersEdit(['id' => $key, 'sex' => $customer['sex']], 'id', $customer['site']);
+        foreach ($customerList as $customer) {
+            $responseСustomerEdit = $client->request->customersEdit(['id' => $customer['id'], 'sex' => $customer['sex']], 'id', $customer['site']);
             file_put_contents(__DIR__ . '/response.log', json_encode([
                 'date' => date('Y-m-d H:i:s'),
-                'customerId' => $key,
+                'customerId' => $customer['id'],
                 'response' => [
                     $responseСustomerEdit->getStatusCode(),
                     $responseСustomerEdit->isSuccessful(),
